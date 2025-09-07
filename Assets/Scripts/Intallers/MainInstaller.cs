@@ -32,5 +32,9 @@ public class MainInstaller : MonoInstaller
             .To<PlayerPositionService>()
             .FromComponentOn(player)
             .AsSingle();
+
+        Container.Bind<ControlsViewModel>().FromNew().AsSingle().NonLazy();
+        Container.Bind<PauseWindowViewModel>().FromNew().AsSingle().NonLazy();
+        Container.Bind<EndGameWindowViewModel>().FromNew().AsSingle().NonLazy();
     }
 }

@@ -11,24 +11,14 @@ public class EndGameWindow : Window
     [SerializeField] TextMeshProUGUI text;
     [SerializeField] TextMeshProUGUI scoreText;
 
-    [Inject] GameData gameData;
-    [Inject] PlayerData playerData;
-    [Inject] IMaxScoreService maxScoreService;
-
-    private readonly CompositeDisposable disposables = new();
+    [Inject] EndGameWindowViewModel viewModel;
 
     private void Start()
     {
-        gameData.State.Subscribe(v =>
-        {
-            switch (v)
-            {
-                case GameState.Lose: ShowLose(playerData.Score.Value); break;
-                case GameState.Win: ShowWin(); break;
-                default: Close(); break;
-            }
-        }).AddTo(disposables);
-
+        viewModel.OnPlayerLose = ShowLose;
+        viewModel.OnPlayerWin = ShowWin;
+        viewModel.DefaultAction = Close;
+        viewModel.Initialize();
     }
 
     public void ShowWin()
@@ -39,15 +29,13 @@ public class EndGameWindow : Window
         Show();
     }
 
-    public void ShowLose(int score)
+    public void ShowLose(int score, int maxScore)
     {
         background.color = Color.red;
         text.text = "You lose";
-        int maxScore = maxScoreService.Score;
         if (score > maxScore) 
         {
             scoreText.text = $"New record!\nYou score: {score}\nPrevious record: {maxScore}";
-            maxScoreService.Score = score;
         }
         else
         {
@@ -58,7 +46,6 @@ public class EndGameWindow : Window
 
     public void RestartBtnOnClick()
     {
-        gameData.State.Value = GameState.Play;
-        playerData.Restart();
+        viewModel.RestartGame();
     }
 }

@@ -16,7 +16,7 @@ public class PlayerMovement : MonoBehaviour {
         rb = GetComponent<Rigidbody>();
     }
 
-    void Update()
+    void FixedUpdate()
     {
         Vector3 movement = new Vector3(HorizontalInput, 0f, VerticalInput);
         movement = movement.normalized * moveSpeed;
